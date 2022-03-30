@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = "A Ruby library for interacting with the reMarkable"
   spec.description   = "A Ruby library for interacting with the reMarkable. It provides an api wrapper for the ReMarkable API."
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = "https://github.com/coalest/remarkable-ruby.git"
   spec.license       = "MIT"
   spec.required_ruby_version = ">= 2.4.0"
 
