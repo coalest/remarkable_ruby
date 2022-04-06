@@ -23,20 +23,20 @@ module ReMarkableRuby
 
     def files
       conn = Faraday.new(
-        url: "https://#{@storage_uri}/",
-        headers: {'Authorization: Bearer' => "#{@auth_token}"}
+        url: "https://#{@storage_uri}?withBlob=true/",
+        headers: {'Authorization' => "Bearer #{auth_token}"}
       )
       response = conn.get("document-storage/json/2/docs")
-      response.body
+      JSON.parse(response.body)
     end
 
 
     def refresh_token(auth_token)
       conn = Faraday.new(url: APP_URL,
-                         headers: {'Authorization: Bearer' => auth_token})
+                         headers: {'Authorization' => "Bearer #{auth_token}"})
       response = conn.post("token/json/2/user/new", "", "Content-Type" => "application/json")
-      
-      response.body
+
+      @auth_token = response.body
     end
 
     private
@@ -45,7 +45,7 @@ module ReMarkableRuby
     def authenticate(one_time_code)
       conn = Faraday.new(
         url: APP_URL,
-        headers: {'Authorization: Bearer' => ""}
+        headers: {'Authorization' => "Bearer "}
       )
       payload = { deviceDesc: "desktop-macos",
                   code: one_time_code,
