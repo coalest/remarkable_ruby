@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in reMarkableRuby.gemspec
+# Specify your gem's dependencies in remarkable_ruby.gemspec
 gemspec
 
 gem "rake", "~> 13.0"

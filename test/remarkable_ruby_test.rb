@@ -2,9 +2,9 @@
 
 require "test_helper"
 
-class ReMarkableRubyTest < Minitest::Test
+class RemarkableRubyTest < Minitest::Test
   def test_that_it_has_a_version_number
-    refute_nil ::ReMarkableRuby::VERSION
+    refute_nil ::RemarkableRuby::VERSION
   end
 
   def test_it_does_something_useful

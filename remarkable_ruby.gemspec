@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 
-require_relative "lib/reMarkableRuby/version"
+require_relative "lib/remarkable_ruby/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "reMarkableRuby"
-  spec.version       = ReMarkableRuby::VERSION
+  spec.name          = "remarkable_ruby"
+  spec.version       = RemarkableRuby::VERSION
   spec.authors       = ["Jordan Streiff", "Cory Streiff"]
   spec.email         = ["jordan.streiff@gmail.com", "c.streiff@pm.me"]
 
   spec.summary       = "A Ruby library for interacting with the reMarkable"
   spec.description   = "A Ruby library for interacting with the reMarkable. It provides an api wrapper for the ReMarkable API."
-  spec.homepage      = "https://github.com/coalest/remarkable-ruby.git"
+  spec.homepage      = "https://github.com/coalest/remarkable_ruby.git"
   spec.license       = "MIT"
   spec.required_ruby_version = ">= 2.4.0"
 
   spec.metadata["allowed_push_host"] = "TODO: Set to 'https://mygemserver.com'"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/coalest/remarkable-ruby"
-  spec.metadata["changelog_uri"] = "https://github.com/coalest/remarkable-ruby/blob/master/CHANGELOG.md"
+  spec.metadata["source_code_uri"] = "https://github.com/coalest/remarkable_ruby"
+  spec.metadata["changelog_uri"] = "https://github.com/coalest/remarkable_ruby/blob/master/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
