@@ -11,6 +11,7 @@ module ReMarkableRuby
 
   class Client
     APP_URL = "https://webapp-production-dot-remarkable-production.appspot.com/"
+    SERVICE_DISCOVERY_URL = "https://service-manager-production-dot-remarkable-production.appspot.com/"
 
     def initialize(one_time_code)
       Faraday.default_adapter = :net_http
@@ -30,15 +31,6 @@ module ReMarkableRuby
       JSON.parse(response.body)
     end
 
-
-    def refresh_token(auth_token)
-      conn = Faraday.new(url: APP_URL,
-                         headers: {'Authorization' => "Bearer #{auth_token}"})
-      response = conn.post("token/json/2/user/new", "", "Content-Type" => "application/json")
-
-      @auth_token = response.body
-    end
-
     private
     attr_reader :auth_token
 
@@ -56,11 +48,19 @@ module ReMarkableRuby
     end
 
     def fetch_storage_uri
-      conn = Faraday.new(url: 'https://service-manager-production-dot-remarkable-production.appspot.com/',
+      conn = Faraday.new(url: SERVICE_DISCOVERY_URL,
                          headers: {'Authorization: Bearer' => "#{auth_token}"})     
       response = conn.get('service/json/1/document-storage?environment=production&group=auth0%7C5a68dc51cb30df3877a1d7c4&apiVer=2')
       response_body = JSON.parse(response.body)
       response_body["Host"]
+    end
+
+    def refresh_token(auth_token)
+      conn = Faraday.new(url: APP_URL,
+                         headers: {'Authorization' => "Bearer #{auth_token}"})
+      response = conn.post("token/json/2/user/new", "", "Content-Type" => "application/json")
+
+      @auth_token = response.body
     end
   end
 end
