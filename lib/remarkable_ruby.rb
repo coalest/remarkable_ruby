@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "reMarkableRuby/version"
-require_relative "reMarkableRuby/config"
+require_relative "remarkable_ruby/version"
+require_relative "remarkable_ruby/config"
 require "faraday"
 require "faraday/net_http"
 require "securerandom"
