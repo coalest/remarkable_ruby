@@ -53,25 +53,6 @@ module RemarkableRuby
       File.write("#{uuid}.zip", streamed.join)
     end
 
-    # returns array of highlight hashes
-    # TODO: clean up highlights (remove duplicates and join touching)
-    # TODO: make highlight class
-    def extract_highlight_doc(uuid)
-      path_to_zip = "#{Dir.getwd}/#{uuid}.zip"
-      download_doc(uuid) unless File.exists?(path_to_zip)
-
-      highlights = []
-      Zip::File.open(path_to_zip) do |zip|
-        zip.each do |file|
-          next unless highlight_file?(file.name)
-          
-          some_highlights = JSON.parse(file.get_input_stream.read)['highlights'][0]
-          highlights << some_highlights
-        end
-      end
-      highlights.flatten
-    end
-
     private
 
     def authenticate(one_time_code)
@@ -117,11 +98,6 @@ module RemarkableRuby
 
     def valid?(one_time_code)
       one_time_code.is_a? String && one_time_code.length == 8
-    end
-
-    def highlight_file?(file_path)
-      file_name = file_path.split("/").last
-      file_name.split('.').last == "json" && file_name.length == 41
     end
   end
 end
