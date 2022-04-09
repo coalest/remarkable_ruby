@@ -50,7 +50,9 @@ module RemarkableRuby
       conn.get(dl_link) do |req|
         req.options.on_data = Proc.new { |chunk| streamed << chunk }
       end
-      File.write("#{uuid}.zip", streamed.join)
+      new_file_name = "#{uuid}.zip"
+      File.write(new_file_name, streamed.join)
+      new_file_name
     end
 
     private
