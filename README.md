@@ -4,17 +4,7 @@ An unofficial API client for the [ReMarkable](https://remarkable.com/) tablet wr
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'remarkable_ruby'
-```
-
-And then execute:
-
-    $ bundle install
-
-Or install it yourself as:
+Once available as a Ruby gem, it can be installed with:
 
     $ gem install remarkable_ruby
 
