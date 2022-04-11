@@ -3,6 +3,7 @@
 require_relative "remarkable_ruby/version"
 require_relative "remarkable_ruby/config"
 require_relative "remarkable_ruby/error"
+require_relative "remarkable_ruby/highlight"
 require "faraday"
 require "faraday/net_http"
 require "securerandom"
@@ -39,7 +40,7 @@ module RemarkableRuby
     end
 
     # Download the zip file for a given document in the user's current directory
-    def download_doc(uuid = '')
+    def download(uuid = '')
       conn = Faraday.new(url: @storage_uri, headers: auth_header(@user_token))
       response = conn.get("document-storage/json/2/docs") do |req|
         req.params['doc'] = uuid
@@ -53,6 +54,25 @@ module RemarkableRuby
       new_file_name = "#{uuid}.zip"
       File.write(new_file_name, streamed.join)
       new_file_name
+    end
+
+    # TODO: clean up highlights (remove duplicates and join touching)
+    def extract_highlights(doc_uuid)
+      path_to_zip = "#{Dir.getwd}/#{doc_uuid}.zip"
+      download(doc_uuid) unless File.exists?(path_to_zip)
+
+      highlights = []
+      Zip::File.open(path_to_zip) do |zip|
+        zip.each do |file|
+          next unless highlight_file?(file.name)
+
+          page_highlights = JSON.parse(file.get_input_stream.read)['highlights'][0]
+          page_highlights.map! { |hash| Highlight.new(hash) }
+          page_highlights.sort_by! { |highlight| highlight.start }
+          highlights << page_highlights
+        end
+      end
+      highlights
     end
 
     private
@@ -100,6 +120,14 @@ module RemarkableRuby
 
     def valid?(one_time_code)
       one_time_code.is_a? String && one_time_code.length == 8
+    end
+
+    def highlight_file?(file_path)
+      file_name = file_path.split("/").last
+      base, ext = file_name.split(".")
+
+      # uuid are 36 characters long
+      base.length == 36 && ext == "json"
     end
   end
 end
