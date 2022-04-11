@@ -20,12 +20,12 @@ Or install it yourself as:
 
 ## Features
 
-    [X] List content on device
-    [X] Download content
-    [ ] Upload content
-    [ ] Create folders
-    [ ] Move/rename documents and folders
-    [ ] Delete a document or folder
+- [x] List content on device
+- [x] Download content
+- [ ] Upload content
+- [ ] Create folders
+- [ ] Move/rename documents and folders
+- [ ] Delete a document or folder
 
 ## Contributing
 
