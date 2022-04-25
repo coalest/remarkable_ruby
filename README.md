@@ -15,7 +15,7 @@ Once available as a Ruby gem, it can be installed with:
 - [ ] Upload content
 - [ ] Create folders
 - [ ] Move/rename documents and folders
-- [ ] Delete a document or folder
+- [x] Delete a document or folder
 
 ## Contributing
 

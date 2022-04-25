@@ -11,3 +11,5 @@ gem "standard"
 gem "faraday"
 gem "faraday-net_http"
 gem "rubyzip"
+
+gem "pry", "~> 0.14.1"
