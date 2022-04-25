@@ -5,10 +5,10 @@ require "faraday/net_http"
 require "securerandom"
 require "json"
 require "zip"
-require_relative "remarkable_ruby/client"
-require_relative "remarkable_ruby/version"
-require_relative "remarkable_ruby/config"
-require_relative "remarkable_ruby/error"
 
 module RemarkableRuby
+  autoload :Client, "remarkable_ruby/client"
+  autoload :Version, "remarkable_ruby/version"
+  autoload :Config, "remarkable_ruby/config"
+  autoload :Error, "remarkable_ruby/error"
 end
