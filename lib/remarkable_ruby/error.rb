@@ -1,7 +1,5 @@
 module RemarkableRuby
-  class AuthError < StandardError; end
-
-  class APIError < StandardError; end
+  class Error < StandardError; end
 end
 
 
