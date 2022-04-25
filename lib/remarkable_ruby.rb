@@ -15,12 +15,15 @@ module RemarkableRuby
   class Client
     APP_URL = "https://webapp-production-dot-remarkable-production.appspot.com/"
     SERVICE_DISCOVERY_URL = "https://service-manager-production-dot-remarkable-production.appspot.com/"
+    SERVICE_DISCOVERY_ENDPOINT = "service/json/1/document-storage?"\
+      "environment=production&group=auth0%7C5a68dc51cb30df3877a1d7c4&apiVer=2"
 
     def initialize(one_time_code = nil)
       tokens = Config.load_tokens || {}
       
       @device_token = tokens['devicetoken'] || authenticate(one_time_code)
       @user_token = refresh_token
+
       Config.save(device_token: @device_token, user_token: @user_token)
 
       @storage_uri = fetch_storage_uri
@@ -41,6 +44,7 @@ module RemarkableRuby
 
     def authenticate(one_time_code)
       conn = Faraday.new(url: APP_URL, headers: auth_header)
+
       payload = { deviceDesc: "desktop-macos",
                   code: one_time_code,
                   deviceID: SecureRandom.uuid }.to_json
@@ -52,12 +56,14 @@ module RemarkableRuby
     def fetch_storage_uri
       conn = Faraday.new(url: SERVICE_DISCOVERY_URL, headers: auth_header(@user_token))     
       response = conn.get('service/json/1/document-storage?environment=production&group=auth0%7C5a68dc51cb30df3877a1d7c4&apiVer=2')
+
       response_body = JSON.parse(response.body)
       "https://" + response_body["Host"]
     end
 
     def refresh_token
       conn = Faraday.new(url: APP_URL, headers: auth_header(@device_token))
+
       response = conn.post("token/json/2/user/new", "", "Content-Type" => "application/json")
       response.body
     end
@@ -67,4 +73,3 @@ module RemarkableRuby
     end
   end
 end
-
