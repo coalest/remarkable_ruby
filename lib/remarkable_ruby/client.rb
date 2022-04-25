@@ -31,7 +31,7 @@ module RemarkableRuby
     def get_docs(download_links: false)
       params = download_links ? { 'withBlob': true } : {}
       response = connection.get("document-storage/json/2/docs", params)
-      Collection.from_response(response, Document)
+      Collection.from_response(response)
     end
 
     def get_doc(uuid:, download_link: false)
@@ -55,6 +55,12 @@ module RemarkableRuby
       new_file_name = "#{uuid}.zip"
       File.write(new_file_name, streamed.join)
       new_file_name
+    end
+    
+    def create_folder(name:, location: "")
+      payload = { name: name, location: location }.merge(Folder.defaults)
+      response = connection.put("document-storage/json/2/upload/update-status", payload)
+      handle_response(response)
     end
 
     def delete_doc(uuid:)
