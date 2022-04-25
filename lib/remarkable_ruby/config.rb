@@ -11,7 +11,9 @@ module Config
   end
 
   def self.save(device_token: nil, user_token: nil)
-    config_hash = YAML::load_file(CONFIG_FILE_PATH)
+    FileUtils.touch(CONFIG_FILE_PATH) unless File.exists?(CONFIG_FILE_PATH)
+
+    config_hash = YAML::load_file(CONFIG_FILE_PATH) || {}
     config_hash['devicetoken'] = device_token if device_token
     config_hash['usertoken'] = user_token if user_token
     File.write(CONFIG_FILE_PATH, config_hash.to_yaml)

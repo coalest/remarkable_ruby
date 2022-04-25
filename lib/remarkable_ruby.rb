@@ -2,6 +2,7 @@
 
 require_relative "remarkable_ruby/version"
 require_relative "remarkable_ruby/config"
+require_relative "remarkable_ruby/error"
 require "faraday"
 require "faraday/net_http"
 require "securerandom"
@@ -10,8 +11,6 @@ require "json"
 Faraday.default_adapter = :net_http
 
 module RemarkableRuby
-  class Error < StandardError; end
-
   class Client
     APP_URL = "https://webapp-production-dot-remarkable-production.appspot.com/"
     SERVICE_DISCOVERY_URL = "https://service-manager-production-dot-remarkable-production.appspot.com/"
@@ -20,13 +19,14 @@ module RemarkableRuby
 
     def initialize(one_time_code = nil)
       tokens = Config.load_tokens || {}
-      
       @device_token = tokens['devicetoken'] || authenticate(one_time_code)
       @user_token = refresh_token
 
       Config.save(device_token: @device_token, user_token: @user_token)
 
       @storage_uri = fetch_storage_uri
+
+      Config.save(device_token: @device_token, user_token: @user_token)
     end
 
     # returns metadata for all files by default, unless a doc uuid is given
@@ -43,6 +43,10 @@ module RemarkableRuby
     private
 
     def authenticate(one_time_code)
+      unless valid?(one_time_code)
+        raise AuthError.new("One-time code should be 8 letters long")
+      end
+
       conn = Faraday.new(url: APP_URL, headers: auth_header)
 
       payload = { deviceDesc: "desktop-macos",
@@ -50,11 +54,16 @@ module RemarkableRuby
                   deviceID: SecureRandom.uuid }.to_json
       response = conn.post("token/json/2/device/new", payload,
                            "Content-Type" => "application/json")
-      response.body
+
+      if response.body.downcase.include?("invalid")
+        raise AuthError.new("Invalid one-time code")
+      else
+        response.body
+      end
     end
 
     def fetch_storage_uri
-      conn = Faraday.new(url: SERVICE_DISCOVERY_URL, headers: auth_header(@user_token))     
+      conn = Faraday.new(url: SERVICE_DISCOVERY_URL)     
       response = conn.get('service/json/1/document-storage?environment=production&group=auth0%7C5a68dc51cb30df3877a1d7c4&apiVer=2')
 
       response_body = JSON.parse(response.body)
@@ -65,11 +74,20 @@ module RemarkableRuby
       conn = Faraday.new(url: APP_URL, headers: auth_header(@device_token))
 
       response = conn.post("token/json/2/user/new", "", "Content-Type" => "application/json")
+
+      if response.body.downcase.include?("invalid")
+        raise AuthError.new("Invalid device token")
+      end
+
       response.body
     end
 
     def auth_header(token = nil)
       {'Authorization' => "Bearer #{token}"}
+    end
+
+    def valid?(one_time_code)
+      one_time_code.is_a? String && one_time_code.length == 8
     end
   end
 end
