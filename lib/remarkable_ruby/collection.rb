@@ -1,12 +1,18 @@
 module RemarkableRuby 
   class Collection
-    def self.from_response(response, type)
+    def self.from_response(response)
       body = JSON.parse(response.body)
-      new(files: body.map{ |attrs| type.new(attrs) })
+      new(body.map do |attrs|
+        case attrs['Type']
+        when "CollectionType" then Folder.new(attrs)
+        when "DocumentType"   then Document.new(attrs) 
+        else                       OpenStruct.new(attrs)
+        end
+      end)
     end
 
-    def initialize(files)
-      @files = files
+    def initialize(contents)
+      @contents = contents
     end
   end
 end
