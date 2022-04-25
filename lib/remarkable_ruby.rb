@@ -9,7 +9,7 @@ require "json"
 
 Faraday.default_adapter = :net_http
 
-module ReMarkableRuby
+module RemarkableRuby
   class Error < StandardError; end
 
   class Client
@@ -20,29 +20,31 @@ module ReMarkableRuby
 
     def initialize(one_time_code = nil)
       tokens = Config.load_tokens || {}
-      @device_token = tokens["devicetoken"] || authenticate(one_time_code)
-      @user_token = tokens["usertoken"] || refresh_token
+      
+      @device_token = tokens['devicetoken'] || authenticate(one_time_code)
+      @user_token = refresh_token
+
       Config.save(device_token: @device_token, user_token: @user_token)
 
       @storage_uri = fetch_storage_uri
     end
 
-    def files
-      conn = Faraday.new(
-        url: "https://#{@storage_uri}?withBlob=true/",
-        headers: { "Authorization" => "Bearer #{@user_token}" }
-      )
-      response = conn.get("document-storage/json/2/docs")
+    # returns metadata for all files by default, unless a doc uuid is given
+    def get_metadata(doc_uuid: nil, with_dl_links: false)
+      conn = Faraday.new(url: @storage_uri, headers: auth_header(@user_token))
+      response = conn.get("document-storage/json/2/docs") do |req|
+        req.params['doc'] = doc_uuid if doc_uuid
+        req.params['withBlob'] = with_dl_links if with_dl_links
+      end
+
       JSON.parse(response.body)
     end
 
     private
 
     def authenticate(one_time_code)
-      conn = Faraday.new(
-        url: APP_URL,
-        headers: { "Authorization" => "Bearer " }
-      )
+      conn = Faraday.new(url: APP_URL, headers: auth_header)
+
       payload = { deviceDesc: "desktop-macos",
                   code: one_time_code,
                   deviceID: SecureRandom.uuid }.to_json
@@ -52,18 +54,22 @@ module ReMarkableRuby
     end
 
     def fetch_storage_uri
-      conn = Faraday.new(url: SERVICE_DISCOVERY_URL,
-                         headers: { "Authorization: Bearer" => @device_token.to_s })
-      response = conn.get(SERVICE_DISCOVERY_ENDPOINT)
+      conn = Faraday.new(url: SERVICE_DISCOVERY_URL, headers: auth_header(@user_token))     
+      response = conn.get('service/json/1/document-storage?environment=production&group=auth0%7C5a68dc51cb30df3877a1d7c4&apiVer=2')
+
       response_body = JSON.parse(response.body)
-      response_body["Host"]
+      "https://" + response_body["Host"]
     end
 
     def refresh_token
-      conn = Faraday.new(url: APP_URL,
-                         headers: { "Authorization" => "Bearer #{@device_token}" })
+      conn = Faraday.new(url: APP_URL, headers: auth_header(@device_token))
+
       response = conn.post("token/json/2/user/new", "", "Content-Type" => "application/json")
       response.body
+    end
+
+    def auth_header(token = nil)
+      {'Authorization' => "Bearer #{token}"}
     end
   end
 end
