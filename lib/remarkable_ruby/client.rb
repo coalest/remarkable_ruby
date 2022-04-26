@@ -12,7 +12,7 @@ module RemarkableRuby
       return if tokens.nil?
 
       @device_token = tokens['devicetoken']
-      @user_token = refresh_token
+      @user_token = tokens['usertoken'] || refresh_token
     end
 
     def register_device(one_time_code)
@@ -55,6 +55,21 @@ module RemarkableRuby
       new_file_name = "#{uuid}.zip"
       File.write(new_file_name, streamed.join)
       new_file_name
+    end
+
+    def highlights(uuid)
+      highlights = []
+      download_doc(uuid) unless File.exists?("#{uuid}.zip")
+      Zip::File.open("#{uuid}.zip") do |zip_file|
+        zip_file.each do |entry|
+          next unless entry.name.include?("highlights")
+          json = JSON.parse(entry.get_input_stream.read)['highlights'].first
+          page_highlights = json.map{ |attrs| Highlight.new(attrs) }
+          page_highlights.sort_by!(&:start)
+          highlights << Highlight.join_adjacent(page_highlights)
+        end
+      end
+      highlights.flatten
     end
     
     def create_folder(name:, location: "")

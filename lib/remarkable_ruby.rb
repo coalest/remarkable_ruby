@@ -6,6 +6,7 @@ require "securerandom"
 require "json"
 require "zip"
 require "yaml"
+require "pry"
 
 module RemarkableRuby
   autoload :Client, "remarkable_ruby/client"
@@ -15,4 +16,5 @@ module RemarkableRuby
   autoload :Collection, "remarkable_ruby/collection"
   autoload :Document, "remarkable_ruby/document"
   autoload :Folder, "remarkable_ruby/folder"
+  autoload :Highlight, "remarkable_ruby/highlight"
 end

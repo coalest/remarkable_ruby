@@ -1,5 +1,3 @@
-require 'yaml'
-
 module RemarkableRuby
   class Config
     HOME_DIR = Dir.home
