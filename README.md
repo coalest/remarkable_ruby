@@ -2,12 +2,6 @@
 
 A Ruby API wrapper for the [ReMarkable](https://remarkable.com/) tablet based on the unofficial API.
 
-## Installation
-
-Once available as a Ruby gem, it can be installed with:
-
-    $ gem install remarkable_ruby
-
 ## Features
 
 - [x] List content on device
