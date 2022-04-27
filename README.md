@@ -1,6 +1,6 @@
 # remarkable_ruby
 
-An unofficial API client for the [ReMarkable](https://remarkable.com/) tablet written in Ruby.
+A Ruby API wrapper for the [ReMarkable](https://remarkable.com/) tablet based on the unofficial API.
 
 ## Installation
 
