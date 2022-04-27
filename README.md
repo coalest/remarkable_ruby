@@ -12,10 +12,11 @@ Once available as a Ruby gem, it can be installed with:
 
 - [x] List content on device
 - [x] Download content
-- [ ] Upload content
+- [x] Delete a document or folder
+- [x] View highlights from a document
+- [ ] Upload files
 - [ ] Create folders
 - [ ] Move/rename documents and folders
-- [x] Delete a document or folder
 
 ## Contributing
 
