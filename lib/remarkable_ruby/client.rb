@@ -12,7 +12,7 @@ module RemarkableRuby
       return if tokens.nil?
 
       @device_token = tokens['devicetoken']
-      @user_token = tokens['usertoken'] || refresh_token
+      @user_token = refresh_token
     end
 
     def register_device(one_time_code)
@@ -63,9 +63,9 @@ module RemarkableRuby
       Zip::File.open("#{uuid}.zip") do |zip_file|
         zip_file.each do |entry|
           next unless entry.name.include?("highlights")
+
           json = JSON.parse(entry.get_input_stream.read)['highlights'].first
           page_highlights = json.map{ |attrs| Highlight.new(attrs) }
-          page_highlights.sort_by!(&:start)
           highlights << Highlight.join_adjacent(page_highlights)
         end
       end

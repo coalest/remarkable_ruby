@@ -7,48 +7,51 @@ class Highlight
     @length = attrs['length']
     @start = attrs['start']
   end
-  
-  def self.join_adjacent(highlights)
-    highlights.sort_by!(&:start)
-    adjacent_indexes(highlights).map do |first, last|
-      merged_attributes = merge(highlights[first..last])
-      new(merged_attributes)
+
+  class << self
+    def join_adjacent(highlights)
+      highlights = highlights.sort_by(&:start)
+      adjacent_indexes(highlights).map do |first, last|
+        merged_attributes = merge(highlights[first..last])
+        new(merged_attributes)
+      end
     end
-  end
 
-  def self.adjacent_indexes(highlights)
-    adjacent_highlights = []
-    offset = 0
-    bools = get_bools(highlights)
-    while offset < highlights.length - 2
-      next_false_index = bools[offset..-1].index(false) + offset
-      adjacent_highlights << [offset, next_false_index]
-      offset = next_false_index + 1
+    private
+
+    def adjacent?(highlight_1, highlight_2)
+      highlight_2.start - (highlight_1.length + highlight_1.start) <= 2
     end
-    adjacent_highlights
-  end
 
-  def self.get_bools(highlights)
-    bools = []
-    highlights[0..-2].each_with_index do |hl, i|
-      bools << hl.is_adjacent?(highlights[i + 1])
+    def adjacent_indexes(highlights)
+      adjacent_highlights = []
+      offset = 0
+      bools = get_bools(highlights)
+      while offset < highlights.length - 2
+        next_false_index = bools[offset..-1].index(false) + offset
+        adjacent_highlights << [offset, next_false_index]
+        offset = next_false_index + 1
+      end
+      adjacent_highlights
     end
-    bools.push(false)
-  end
 
-  def self.merge(highlights)
-    combined_text = highlights.map(&:text).join(' ')
+    def get_bools(highlights)
+      bools = []
+      highlights[0..-2].each_with_index do |hl, i|
+        bools << adjacent?(hl, highlights[i + 1])
+      end
+      bools.push(false)
+    end
 
-    {
-      'color' => highlights.first.color,
-      'text' => combined_text,
-      'length' => combined_text.length,
-      'start' => highlights.first.start
-    }
-  end
+    def merge(highlights)
+      combined_text = highlights.map(&:text).join(' ')
 
-  def is_adjacent?(highlight)
-    first, second = self, highlight
-    second.start - (first.length + first.start) <= 2
+      {
+        'color' => highlights.first.color,
+        'text' => combined_text,
+        'length' => combined_text.length,
+        'start' => highlights.first.start
+      }
+    end
   end
 end
