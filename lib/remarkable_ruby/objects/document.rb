@@ -2,6 +2,9 @@ module RemarkableRuby
   class Document < Object
     # Download the zip file for a given document in the user's current directory
     def download
+      file_name = "#{name}.zip"
+      return if File.exists?(file_name)
+
       params = { doc: @uuid, withBlob: true }
       response = @connection.get("document-storage/json/2/docs", params)
 
@@ -10,10 +13,9 @@ module RemarkableRuby
       @connection.get(dl_link) do |req|
         req.options.on_data = Proc.new { |chunk| streamed << chunk }
       end
+      File.write(file_name, streamed.join)
 
-      new_file_name = "#{name}.zip"
-      File.write(new_file_name, streamed.join)
-      new_file_name
+      file_name
     end
 
     def delete
