@@ -12,7 +12,7 @@ module RemarkableRuby
       return if tokens.nil?
 
       @device_token = tokens['devicetoken']
-      @user_token = refresh_token
+      @user_token = refresh_user_token
     end
 
     # returns metadata for all files
@@ -32,14 +32,11 @@ module RemarkableRuby
     end
 
     def register_device(one_time_code)
-      body = { deviceDesc: "desktop-macos",
-                  code: one_time_code,
-                  deviceID: SecureRandom.uuid }.to_json
-      response = auth_connection.post(DEVICE_TOKEN_ENDPOINT, body, {})
+      response = auth_connection.post(DEVICE_TOKEN_ENDPOINT, new_device_params, {})
       device_token = handle_response(response).body
 
       @device_token = device_token
-      @user_token = refresh_token
+      @user_token = refresh_user_token
       Config.save(device_token: @device_token, user_token: @user_token)
     end
 
@@ -74,7 +71,7 @@ module RemarkableRuby
       @storage_url = "https://" + body["Host"]
     end
 
-    def refresh_token
+    def refresh_user_token
       response = auth_connection.post(USER_TOKEN_ENDPOINT)
       response.body
     end
@@ -94,6 +91,13 @@ module RemarkableRuby
         when "DocumentType"   then Document.new(attrs, @connection) 
         end
       end
+    end
+
+    def new_device_body
+      { deviceDesc: "desktop-macos",
+        code: one_time_code,
+        deviceID: SecureRandom.uuid
+      }.to_json
     end
   end
 end
