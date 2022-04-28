@@ -1,14 +1,17 @@
 module RemarkableRuby
-  class Folder < OpenStruct
-    def initialize(attributes)
-      attributes.merge!(Folder.defaults) if attributes.keys.count <= 2
+  class Folder < Object
+    def initialize(attrs, connection)
+      attrs.merge!(Folder.defaults) if attrs.keys.count <= 2
       super
     end
 
     private
 
+    attr_reader :client
+
     def self.defaults
-      { ID: SecureRandom.uuid,
+      { 
+        ID: SecureRandom.uuid,
         Version: 1,
         Message: "",
         Success: true,
@@ -17,7 +20,8 @@ module RemarkableRuby
         ModifiedClient: Time.now.to_s,
         Type: "CollectionType",
         CurrentPage: 0,
-        Bookmarked: false }
+        Bookmarked: false 
+      }
     end
   end
 end
