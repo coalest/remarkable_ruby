@@ -23,8 +23,8 @@ module RemarkableRuby
 
     def highlights
       highlights = []
-      download(uuid) unless File.exists?("#{uuid}.zip")
-      Zip::File.open("#{uuid}.zip") do |zip_file|
+      download unless File.exists?("#{name}.zip")
+      Zip::File.open("#{name}.zip") do |zip_file|
         zip_file.each do |entry|
           next unless entry.name.include?("highlights")
 
