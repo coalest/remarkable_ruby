@@ -7,8 +7,6 @@ module RemarkableRuby
 
     private
 
-    attr_reader :client
-
     def self.defaults
       { 
         ID: SecureRandom.uuid,
