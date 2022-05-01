@@ -10,7 +10,6 @@ client.documents
 client.document(uuid:)
 
 p document
-document(uuid).upload
 document.delete
 document.update
 document.download

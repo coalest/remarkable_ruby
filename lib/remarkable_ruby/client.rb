@@ -27,12 +27,12 @@ module RemarkableRuby
       params = download_link ? { 'withBlob': true } : {}
       params[:doc] = uuid
       response = connection.get("document-storage/json/2/docs", params)
-      hash = JSON.parse(response.body).first
-      Document.new(hash)
+      attrs = JSON.parse(response.body).first
+      Document.new(attrs:attrs)
     end
 
     def register_device(one_time_code)
-      response = auth_connection.post(DEVICE_TOKEN_ENDPOINT, new_device_params, {})
+      response = auth_connection.post(DEVICE_TOKEN_ENDPOINT, new_device_body, {})
       device_token = handle_response(response).body
 
       @device_token = device_token
@@ -87,8 +87,8 @@ module RemarkableRuby
       body = JSON.parse(response.body)
       body.map do |attrs|
         case attrs["Type"]
-        when "CollectionType" then Folder.new(attrs, @connection)
-        when "DocumentType"   then Document.new(attrs, @connection) 
+        when "CollectionType" then Folder.new(attrs: attrs, connection: connection)
+        when "DocumentType"   then Document.new(attrs: attrs, connection: connection) 
         end
       end
     end
