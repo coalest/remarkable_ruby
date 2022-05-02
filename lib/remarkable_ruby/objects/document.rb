@@ -41,18 +41,24 @@ module RemarkableRuby
     end
 
     def upload
+      # Get URL for put request
       payload = [{ "ID": uuid, "Type": type, "Version": version }]
       response = @connection.put("document-storage/json/2/upload/request", payload)
       put_url = JSON.parse(response.body).first["BlobURLPut"]
 
-      # Workaround to not use multipart
+      # Create and send zip to URL
       ZipDocument.new(self).dump
-      file_data = Base64.encode64(File.read("#{uuid}.zip"))
-      response = @connection.put(put_url, file_data) do |r|
+      user_token = Config.load_tokens['usertoken']
+      file_data = File.read("#{uuid}.zip")
+      connection = Faraday.new(put_url) do |conn|
+          conn.request :authorization, :Bearer, user_token
+      end
+      response = connection.put("", file_data) do |r|
         r.headers['Content-Type'] = ""
       end
 
-      payload = [attributes].to_json
+      # Update metadata so that pdf is visible on device
+      payload = attributes_json
       response = @connection.put("document-storage/json/2/upload/update-status", payload)
     end
 
@@ -62,8 +68,8 @@ module RemarkableRuby
       JSON.parse(response.body)[0]['BlobURLGet']
     end
 
-    def attributes
-      { "ID": @uuid,
+    def attributes_json
+      [{ "ID": @uuid,
          # "BlobURLGet": "",
          # "CurrentPage": 0,
          # "BlobURLGetExpires": "0001-01-01T00:00:00Z",
@@ -74,7 +80,7 @@ module RemarkableRuby
          "ModifiedClient": Time.now.strftime("%Y-%m-%dT%H:%M:%SZ"),
          "Type": "DocumentType",
          "VissibleName": @name.split(".").first,
-         "Parent": "" }
+         "Parent": "" }].to_json
     end
   end
 end
