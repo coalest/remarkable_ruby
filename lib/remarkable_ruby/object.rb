@@ -1,10 +1,10 @@
 module RemarkableRuby
   class Object
-    attr_reader :uuid, :version, :message, :success, :blob_url_get,
-      :blob_url_get_expires, :modified_client, :type, :name, :current_page,
-      :bookmarked, :connection, :path
+    attr_reader :uuid, :path, :message, :success, :blob_url_get, :bookmarked, 
+      :blob_url_get_expires, :modified_client, :type, :current_page,
+      :connection
 
-    attr_accessor :parent, :name
+    attr_accessor :parent, :name, :version
 
     def initialize(attrs: nil, client: nil, path: nil)
       @client = client ? client : Client.new

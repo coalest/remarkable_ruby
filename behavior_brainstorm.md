@@ -13,7 +13,8 @@ document = client.documents(uuid: uuid) # One document
 ## Document features
 document.download                       # Download the zip file
 document.highlights                     # Array of highlights from doc
-document.delete                         # Delete document from device
+document.delete                         # Move doc to trash
+document.delete!                        # Delete doc from device and cloud
 
 document = Document.new(path_to_pdf)    
 document.upload                         # Upload a pdf
