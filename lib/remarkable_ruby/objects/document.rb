@@ -21,8 +21,13 @@ module RemarkableRuby
       file_name
     end
 
-    # Delete a document from 
+    # Move a document to the trash folder
     def delete
+      update(parent: "trash")
+    end
+
+    # Delete a document from device and cloud
+    def delete!
       payload = [{ ID: uuid, Version: version }]
       response = connection.put("/document-storage/json/2/delete", payload)
     end
@@ -50,11 +55,12 @@ module RemarkableRuby
     end
 
     def update(name: nil, parent: nil)
-      file_attrs = self.attributes
-      file_attrs[:VissibleName] = name if name
-      file_attrs[:Parent] = parent if parent
-      file_attrs[:Version] += 1
-      update_metadata(file_attrs)
+      return unless name || parent
+
+      self.name = name if name
+      self.parent = parent if parent
+      self.version += 1
+      update_metadata(attributes)
     end
 
     private
