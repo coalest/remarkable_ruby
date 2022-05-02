@@ -2,10 +2,13 @@ module RemarkableRuby
   class Object
     attr_reader :uuid, :version, :message, :success, :blob_url_get,
       :blob_url_get_expires, :modified_client, :type, :name, :current_page,
-      :bookmarked, :parent, :connection, :path, :name
+      :bookmarked, :connection, :path
 
-    def initialize(attrs: nil, connection: nil, path: nil)
-      @connection = connection ? connection : Client.new.connection
+    attr_accessor :parent, :name
+
+    def initialize(attrs: nil, client: nil, path: nil)
+      @client = client ? client : Client.new
+      @connection = @client.connection
       @path = path
       @name = File.basename(path) if path
 
@@ -43,6 +46,21 @@ module RemarkableRuby
       @current_page = attrs["CurrentPage"]
       @bookmarked = attrs["Bookmarked"]
       @parent = attrs["Parent"]
+    end
+
+    def attributes
+      { "ID": @uuid,
+        "BlobURLGet": @blob_url_get,
+        "CurrentPage": @current_page,
+        "BlobURLGetExpires": @blob_url_get_expires,
+        "Message": @message,
+        "Success": @success,
+        "Bookmarked": @bookmarked,             
+        "Version": @version, 
+        "ModifiedClient": @modified_client,
+        "Type": @type,
+        "VissibleName": @name,
+        "Parent": @parent }
     end
   end
 end

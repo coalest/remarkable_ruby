@@ -1,6 +1,6 @@
 module RemarkableRuby
   class Document < Object
-    def initialize(attrs: nil, connection: nil, path: nil)
+    def initialize(attrs: nil, client: nil, path: nil)
       @type = "DocumentType"
       super
     end
@@ -44,50 +44,49 @@ module RemarkableRuby
     end
 
     def upload
-      # Get URL for put request
-      payload = [{ "ID": uuid, "Type": type, "Version": version }]
-      response = @connection.put("document-storage/json/2/upload/request", payload)
-      put_url = JSON.parse(response.body).first["BlobURLPut"]
+      url = put_blob_url
+      upload_file(url)
+      update_metadata(attributes)
+    end
 
-      # Create and send zip to URL
-      zip_doc = ZipDocument.new(self).dump
-      user_token = Config.load_tokens['usertoken']
-      file_data = File.read(zip_doc)
-      connection = Faraday.new(put_url) do |conn|
-          conn.request :authorization, :Bearer, user_token
-          conn.headers['Content-Type'] = ""
-      end
-      response = connection.put("", file_data) do |r|
-      end
-      FileUtils.remove_entry(zip_doc)
-
-      # Update metadata so that pdf is visible on device
-      payload = attributes_json
-      response = @connection.put("document-storage/json/2/upload/update-status", payload)
+    def update(name: nil, parent: nil)
+      file_attrs = self.attributes
+      file_attrs[:VissibleName] = name if name
+      file_attrs[:Parent] = parent if parent
+      file_attrs[:Version] += 1
+      update_metadata(file_attrs)
     end
 
     private
 
+    def upload_file(url)
+      # Create the zip in a temp dir
+      zip_doc = ZipDocument.new(self).dump
+
+      # Send zip with put http request
+      file_data = File.read(zip_doc)
+      connection = @client.upload_connection(url)
+      response = connection.put("", file_data)
+
+      # Delete zip from temp dir
+      FileUtils.remove_entry(zip_doc)
+    end
+
+    def update_metadata(attrs)
+      payload = [attrs].to_json
+      @connection.put("document-storage/json/2/upload/update-status", payload)
+    end
+
     def get_blob_url
       params = { doc: uuid, withBlob: true }
       response = @connection.get("document-storage/json/2/docs", params)
-
-      JSON.parse(response.body)[0]['BlobURLGet']
+      JSON.parse(response.body).first['BlobURLGet']
     end
 
-    def attributes_json
-      [{ "ID": @uuid,
-         # "BlobURLGet": "",
-         # "CurrentPage": 0,
-         # "BlobURLGetExpires": "0001-01-01T00:00:00Z",
-         # "Message": "",
-         # "Success": true,
-         # "Bookmarked": false,             
-         "Version": 1, 
-         "ModifiedClient": Time.now.strftime("%Y-%m-%dT%H:%M:%SZ"),
-         "Type": "DocumentType",
-         "VissibleName": File.basename(@name, ".*"),
-         "Parent": "" }].to_json
+    def put_blob_url
+      payload = [{ "ID": uuid, "Type": type, "Version": version }]
+      response = @connection.put("document-storage/json/2/upload/request", payload)
+      JSON.parse(response.body).first["BlobURLPut"]
     end
   end
 end

@@ -16,6 +16,12 @@ document.download
 document.highlights
 document.move(locaiton)
 
+## Moving
+document.update(parent: folder_uuid)
+
+## Renaming
+document.update(name: new_name)
+
 # Future behavior
 folder.contents
 folder.highlights
