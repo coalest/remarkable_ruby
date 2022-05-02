@@ -47,15 +47,16 @@ module RemarkableRuby
       put_url = JSON.parse(response.body).first["BlobURLPut"]
 
       # Create and send zip to URL
-      ZipDocument.new(self).dump
+      zip_doc = ZipDocument.new(self).dump
       user_token = Config.load_tokens['usertoken']
-      file_data = File.read("#{uuid}.zip")
+      file_data = File.read(zip_doc)
       connection = Faraday.new(put_url) do |conn|
           conn.request :authorization, :Bearer, user_token
       end
       response = connection.put("", file_data) do |r|
         r.headers['Content-Type'] = ""
       end
+      FileUtils.remove_entry(zip_doc)
 
       # Update metadata so that pdf is visible on device
       payload = attributes_json
