@@ -1,6 +1,6 @@
 module RemarkableRuby
   class ZipDocument
-    attr_reader :path
+    attr_reader :document
 
     def initialize(document)
       # @metadata = { "deleted": false,
@@ -18,11 +18,10 @@ module RemarkableRuby
       # @pagedata = nil
       @document = document
       @path_to_file = document.path
-      @file_name = document.name
     end
 
     def dump
-      uuid = @document.uuid
+      uuid = document.uuid
       folder = Dir.mktmpdir(uuid)
       zip_path = Dir.tmpdir + "/#{uuid}.zip"
       input_filenames = ["#{uuid}.content", "#{uuid}.pagedata", "#{uuid}.pdf"]

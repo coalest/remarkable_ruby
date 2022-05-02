@@ -5,26 +5,11 @@ module RemarkableRuby
       :bookmarked, :parent, :connection, :path, :name
 
     def initialize(attrs: nil, connection: nil, path: nil)
-      if path
-        @path = path
-        @name = File.basename(path)
-        set_defaults
-      else
-        @uuid = attrs["ID"] 
-        @version = attrs["Version"]
-        @message = attrs["Message"]
-        @success = attrs["Success"]
-        @blob_url_get = attrs["BloblURLGet"]
-        @blob_url_get_expires = attrs["BlobURLGetExpires"]
-        @modified_client = attrs["ModifiedClient"]
-        @type = attrs["Type"]
-        @name = attrs["VissibleName"]
-        @current_page = attrs["CurrentPage"]
-        @bookmarked = attrs["Bookmarked"]
-        @parent = attrs["Parent"]
-      end
-
       @connection = connection ? connection : Client.new.connection
+      @path = path
+      @name = File.basename(path) if path
+
+      attrs.nil? ? init_from_defaults : init_from_attributes(attrs)
     end
 
 #     def inspect
@@ -33,10 +18,9 @@ module RemarkableRuby
 #       "@uuid='#{@uuid}>"
 #     end
 
-    def set_defaults
+    def init_from_defaults
       @uuid = SecureRandom.uuid
       @version = 1
-      @type = "DocumentType"
       @message = ""
       @success = true
       @blob_url_get = ""
@@ -45,6 +29,20 @@ module RemarkableRuby
       @current_page = 0
       @bookmarked = false
       @parent = ""
+    end
+
+    def init_from_attributes(attrs)
+      @uuid = attrs["ID"] 
+      @version = attrs["Version"]
+      @message = attrs["Message"]
+      @success = attrs["Success"]
+      @blob_url_get = attrs["BloblURLGet"]
+      @blob_url_get_expires = attrs["BlobURLGetExpires"]
+      @modified_client = attrs["ModifiedClient"]
+      @name = attrs["VissibleName"]
+      @current_page = attrs["CurrentPage"]
+      @bookmarked = attrs["Bookmarked"]
+      @parent = attrs["Parent"]
     end
   end
 end

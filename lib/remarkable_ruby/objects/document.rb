@@ -1,14 +1,17 @@
 module RemarkableRuby
   class Document < Object
+    def initialize(attrs: nil, connection: nil, path: nil)
+      @type = "DocumentType"
+      super
+    end
+
     # Download the zip file for a given document in the user's current directory
     def download
       file_name = "#{uuid}.zip"
       return if File.exists?(file_name)
 
-      params = { doc: @uuid, withBlob: true }
-      response = @connection.get("document-storage/json/2/docs", params)
+      dl_link = get_blob_url
 
-      dl_link = extract_link(response)
       streamed = []
       @connection.get(dl_link) do |req|
         req.options.on_data = Proc.new { |chunk| streamed << chunk }
@@ -52,9 +55,9 @@ module RemarkableRuby
       file_data = File.read(zip_doc)
       connection = Faraday.new(put_url) do |conn|
           conn.request :authorization, :Bearer, user_token
+          conn.headers['Content-Type'] = ""
       end
       response = connection.put("", file_data) do |r|
-        r.headers['Content-Type'] = ""
       end
       FileUtils.remove_entry(zip_doc)
 
@@ -65,7 +68,10 @@ module RemarkableRuby
 
     private
 
-    def extract_link(response)
+    def get_blob_url
+      params = { doc: uuid, withBlob: true }
+      response = @connection.get("document-storage/json/2/docs", params)
+
       JSON.parse(response.body)[0]['BlobURLGet']
     end
 
@@ -80,7 +86,7 @@ module RemarkableRuby
          "Version": 1, 
          "ModifiedClient": Time.now.strftime("%Y-%m-%dT%H:%M:%SZ"),
          "Type": "DocumentType",
-         "VissibleName": @name.split(".").first,
+         "VissibleName": File.basename(@name, ".*"),
          "Parent": "" }].to_json
     end
   end
