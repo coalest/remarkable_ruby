@@ -2,7 +2,7 @@ module RemarkableRuby
   class Object
     attr_reader :uuid, :version, :message, :success, :blob_url_get,
       :blob_url_get_expires, :modified_client, :type, :name, :current_page,
-      :bookmarked, :parent, :connection
+      :bookmarked, :parent, :connection, :path, :name
 
     def initialize(attrs: nil, connection: nil, path: nil)
       if path
