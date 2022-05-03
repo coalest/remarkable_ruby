@@ -54,9 +54,8 @@ module RemarkableRuby
       update_metadata(attributes)
     end
 
-    def update(name: nil, parent: nil, bookmarked:)
+    def update(name: nil, parent: nil, bookmarked: nil)
       return unless name || parent
-
       self.name = name if name
       self.parent = parent if parent
       self.bookmarked = bookmarked if bookmarked
