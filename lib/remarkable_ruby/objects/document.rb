@@ -55,7 +55,8 @@ module RemarkableRuby
     end
 
     def update(name: nil, parent: nil, bookmarked: nil)
-      return unless name || parent
+      return unless name || parent || bookmarked
+
       self.name = name if name
       self.parent = parent if parent
       self.bookmarked = bookmarked if bookmarked
