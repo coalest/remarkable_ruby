@@ -3,19 +3,6 @@ module RemarkableRuby
     attr_reader :document
 
     def initialize(document)
-      # @metadata = { "deleted": false,
-      #               "lastModified": Time.now.strftime("%Y-%m-%dT%H:%M:%SZ"),
-      #               "ModifiedClient": Time.now.strftime("%Y-%m-%dT%H:%M:%SZ"),
-      #               "metadatamodified": false, 
-      #               "modified": false,
-      #               "Parent": "",
-      #               "pinned": false,
-      #               "synced": true,
-      #               "Type": "DocumentType",
-      #               "Version": 1,
-      #               "ID": document.uuid,
-      #               "VissibleName": document.name }
-      # @pagedata = nil
       @document = document
       @path_to_file = document.path
     end
