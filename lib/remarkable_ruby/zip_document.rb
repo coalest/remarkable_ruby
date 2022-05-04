@@ -25,14 +25,14 @@ module RemarkableRuby
     end
 
     def default_pdf_content
-      { "extraMetadata": {},
-        "lastOpenedPage": 0,
-        "lineHeight": -1,
-        "fileType": "pdf",
-        "pageCount": 0,
-        "margins": 180,
-        "textScale": 1,
-        "transform": {} }
+      {extraMetadata: {},
+       lastOpenedPage: 0,
+       lineHeight: -1,
+       fileType: "pdf",
+       pageCount: 0,
+       margins: 180,
+       textScale: 1,
+       transform: {}}
     end
   end
 end
