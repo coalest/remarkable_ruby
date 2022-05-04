@@ -1,5 +1,5 @@
 module RemarkableRuby
-  class Document < Object
+  class Document < Item
     def initialize(attrs: nil, client: nil, path: nil)
       @type = "DocumentType"
       super

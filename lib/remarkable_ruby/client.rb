@@ -19,7 +19,7 @@ module RemarkableRuby
     def documents(download_links: false)
       params = download_links ? { 'withBlob': true } : {}
       response = connection.get("document-storage/json/2/docs", params)
-      create_new_objects(response)
+      create_new_items(response)
     end
 
     # returns metadata for one file
@@ -91,7 +91,7 @@ module RemarkableRuby
       raise Error, "HTTP Status Code #{status}: #{message}"
     end
 
-    def create_new_objects(response)
+    def create_new_items(response)
       body = JSON.parse(response.body)
       body.map do |attrs|
         case attrs["Type"]

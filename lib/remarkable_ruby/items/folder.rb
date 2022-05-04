@@ -1,5 +1,5 @@
 module RemarkableRuby
-  class Folder < Object
+  class Folder < Item
     def initialize(attrs: nil, client: nil, path: nil)
       @type = "CollectionType"
       super

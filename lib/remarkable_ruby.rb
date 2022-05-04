@@ -14,9 +14,9 @@ module RemarkableRuby
   autoload :Config, "remarkable_ruby/config"
   autoload :Error, "remarkable_ruby/error"
   autoload :Highlight, "remarkable_ruby/highlight"
-  autoload :Object, "remarkable_ruby/object"
+  autoload :Item, "remarkable_ruby/item"
   autoload :ZipDocument, "remarkable_ruby/zip_document"
 
-  autoload :Folder, "remarkable_ruby/objects/folder"
-  autoload :Document, "remarkable_ruby/objects/document"
+  autoload :Folder, "remarkable_ruby/items/folder"
+  autoload :Document, "remarkable_ruby/items/document"
 end
