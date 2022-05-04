@@ -36,11 +36,9 @@ module RemarkableRuby
     def highlights
       highlights = []
       download unless File.exists?("#{uuid}.zip")
-      Zip::File.open("#{uuid}.zip") do |zip_file|
-        zip_file.each do |entry|
-          next unless entry.name.include?("highlights")
-
-          json = JSON.parse(entry.get_input_stream.read)['highlights'].first
+      Zip::File.open("#{uuid}.zip") do |zip_doc|
+        zip_doc.select { |file| file.name.include?("highlights") }.each do |file|
+          json = JSON.parse(file.get_input_stream.read)['highlights'].first
           page_highlights = json.map{ |attrs| Highlight.new(attrs) }
           highlights << Highlight.join_adjacent(page_highlights)
         end
