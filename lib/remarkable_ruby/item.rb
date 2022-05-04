@@ -15,12 +15,6 @@ module RemarkableRuby
       attrs.nil? ? init_from_defaults : init_from_attributes(attrs)
     end
 
-#     def inspect
-#       "#<#{self.class}:#{self.object_id} " + 
-#       "@name='#{@name}', " +
-#       "@uuid='#{@uuid}>"
-#     end
-
     def init_from_defaults
       @uuid = SecureRandom.uuid
       @version = 1
