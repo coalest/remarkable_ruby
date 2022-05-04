@@ -1,6 +1,6 @@
 # remarkable_ruby
 
-A Ruby API wrapper for the [ReMarkable](https://remarkable.com/) tablet based on the unofficial API.
+A Ruby API wrapper for the [reMarkable](https://remarkable.com/) tablet based on the unofficial API.
 
 ## Features
 
