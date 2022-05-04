@@ -13,8 +13,10 @@ module RemarkableRuby
   autoload :Version, "remarkable_ruby/version"
   autoload :Config, "remarkable_ruby/config"
   autoload :Error, "remarkable_ruby/error"
-  autoload :Collection, "remarkable_ruby/collection"
-  autoload :Document, "remarkable_ruby/document"
-  autoload :Folder, "remarkable_ruby/folder"
   autoload :Highlight, "remarkable_ruby/highlight"
+  autoload :Item, "remarkable_ruby/item"
+  autoload :ZipDocument, "remarkable_ruby/zip_document"
+
+  autoload :Folder, "remarkable_ruby/items/folder"
+  autoload :Document, "remarkable_ruby/items/document"
 end
