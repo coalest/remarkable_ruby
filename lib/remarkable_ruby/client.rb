@@ -19,7 +19,7 @@ module RemarkableRuby
     def documents(download_links: false)
       params = download_links ? { 'withBlob': true } : {}
       response = connection.get("document-storage/json/2/docs", params)
-      create_new_objects(response)
+      create_new_items(response)
     end
 
     # returns metadata for one file
@@ -27,12 +27,12 @@ module RemarkableRuby
       params = download_link ? { 'withBlob': true } : {}
       params[:doc] = uuid
       response = connection.get("document-storage/json/2/docs", params)
-      hash = JSON.parse(response.body).first
-      Document.new(hash)
+      attrs = JSON.parse(response.body).first
+      Document.new(attrs: attrs)
     end
 
     def register_device(one_time_code)
-      response = auth_connection.post(DEVICE_TOKEN_ENDPOINT, new_device_params, {})
+      response = auth_connection.post(DEVICE_TOKEN_ENDPOINT, new_device_body, {})
       device_token = handle_response(response).body
 
       @device_token = device_token
@@ -49,6 +49,13 @@ module RemarkableRuby
         conn.request :authorization, :Bearer, @user_token
         conn.request :json
         conn.response :json, content_type: "application/json"
+      end
+    end
+
+    def upload_connection(url)
+      Faraday.new(url) do |conn|
+        conn.request :authorization, :Bearer, @user_token
+        conn.headers['Content-Type'] = ""
       end
     end
 
@@ -78,17 +85,18 @@ module RemarkableRuby
 
     def handle_response(response)
       status = response.status
+      message = response.body
       return response if response.status == 200
 
-      raise Error, "HTTP Status Code #{status}: #{response.body}"
+      raise Error, "HTTP Status Code #{status}: #{message}"
     end
 
-    def create_new_objects(response)
+    def create_new_items(response)
       body = JSON.parse(response.body)
       body.map do |attrs|
         case attrs["Type"]
-        when "CollectionType" then Folder.new(attrs, @connection)
-        when "DocumentType"   then Document.new(attrs, @connection) 
+        when "CollectionType" then Folder.new(attrs: attrs, client: self)
+        when "DocumentType"   then Document.new(attrs: attrs, client: self) 
         end
       end
     end
