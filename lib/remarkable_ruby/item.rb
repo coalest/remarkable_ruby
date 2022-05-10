@@ -1,5 +1,7 @@
 module RemarkableRuby
   class Item
+    include RemarkableRuby::ResponseHandling
+
     attr_reader :uuid, :path, :message, :success, :blob_url_get, :bookmarked, 
       :blob_url_get_expires, :modified_client, :type, :current_page,
       :connection

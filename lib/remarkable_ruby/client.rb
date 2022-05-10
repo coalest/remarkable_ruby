@@ -1,5 +1,7 @@
 module RemarkableRuby
   class Client
+    include RemarkableRuby::ResponseHandling
+
     APP_URL = "https://webapp-production-dot-remarkable-production.appspot.com/"
     SERVICE_DISCOVERY_URL = "https://service-manager-production-dot-remarkable-production.appspot.com/"
     DEVICE_TOKEN_ENDPOINT = "token/json/2/device/new"
@@ -81,14 +83,6 @@ module RemarkableRuby
     def refresh_user_token
       response = auth_connection.post(USER_TOKEN_ENDPOINT)
       response.body
-    end
-
-    def handle_response(response)
-      status = response.status
-      message = response.body
-      return response if response.status == 200
-
-      raise Error, "HTTP Status Code #{status}: #{message}"
     end
 
     def create_new_items(response)

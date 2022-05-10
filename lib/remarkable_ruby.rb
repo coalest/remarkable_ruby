@@ -16,6 +16,7 @@ module RemarkableRuby
   autoload :Highlight, "remarkable_ruby/highlight"
   autoload :Item, "remarkable_ruby/item"
   autoload :ZipDocument, "remarkable_ruby/zip_document"
+  autoload :ResponseHandling, "remarkable_ruby/response_handling"
 
   autoload :Folder, "remarkable_ruby/items/folder"
   autoload :Document, "remarkable_ruby/items/document"
