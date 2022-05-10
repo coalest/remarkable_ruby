@@ -20,7 +20,7 @@ module RemarkableRuby
     # returns metadata for all files
     def documents(download_links: false)
       params = download_links ? { 'withBlob': true } : {}
-      response = connection.get("document-storage/json/2/docs", params)
+      response = handle_response connection.get("document-storage/json/2/docs", params)
       create_new_items(response)
     end
 
@@ -28,7 +28,7 @@ module RemarkableRuby
     def document(uuid:, download_link: false)
       params = download_link ? { 'withBlob': true } : {}
       params[:doc] = uuid
-      response = connection.get("document-storage/json/2/docs", params)
+      response = handle_response connection.get("document-storage/json/2/docs", params)
       attrs = JSON.parse(response.body).first
       Document.new(attrs: attrs)
     end
