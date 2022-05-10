@@ -1,20 +1,21 @@
 module RemarkableRuby
   class ZipDocument
-    attr_reader :document
+    attr_reader :document, :extension
 
     def initialize(document)
       @document = document
       @path_to_file = document.path
+      @extension = File.extname(document.name).sub(".", "")
     end
 
     def dump
       uuid = document.uuid
       folder = Dir.mktmpdir(uuid)
       zip_path = Dir.tmpdir + "/#{uuid}.zip"
-      input_filenames = ["#{uuid}.content", "#{uuid}.pagedata", "#{uuid}.pdf"]
-      File.write(folder + "/#{uuid}.content", default_pdf_content.to_json)
+      input_filenames = ["#{uuid}.content", "#{uuid}.pagedata", "#{uuid}.#{extension}"]
+      File.write(folder + "/#{uuid}.content", default_content.to_json)
       File.write(folder + "/#{uuid}.pagedata", "")
-      FileUtils.cp(@path_to_file, folder + "/#{uuid}.pdf")
+      FileUtils.cp(@path_to_file, folder + "/#{uuid}.#{extension}")
       Zip::File.open(zip_path, create: true) do |zipfile|
         input_filenames.each do |filename|
           zipfile.add(filename, File.join(folder, filename))
@@ -24,15 +25,14 @@ module RemarkableRuby
       zip_path
     end
 
-    def default_pdf_content
-      { "extraMetadata": {},
-        "lastOpenedPage": 0,
-        "lineHeight": -1,
-        "fileType": "pdf",
-        "pageCount": 0,
-        "margins": 180,
-        "textScale": 1,
-        "transform": {} }
+    def default_content
+      { extraMetadata: {},
+        lastOpenedPage: 0,
+        lineHeight: -1,
+        pageCount: 0,
+        margins: 180,
+        textScale: 1,
+        transform: {} }
     end
   end
 end
