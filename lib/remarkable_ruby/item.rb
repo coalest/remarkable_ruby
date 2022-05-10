@@ -10,7 +10,6 @@ module RemarkableRuby
 
     def initialize(attrs: nil, client: nil, path: nil)
       @client = client ? client : Client.new
-      @connection = @client.connection
       @path = path
       @name = File.basename(path) if path
 
