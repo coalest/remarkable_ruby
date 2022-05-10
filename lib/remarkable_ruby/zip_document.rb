@@ -29,6 +29,7 @@ module RemarkableRuby
       { extraMetadata: {},
         lastOpenedPage: 0,
         lineHeight: -1,
+        fileType: extension,
         pageCount: 0,
         margins: 180,
         textScale: 1,
