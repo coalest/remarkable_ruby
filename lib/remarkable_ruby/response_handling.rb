@@ -6,6 +6,7 @@ module RemarkableRuby
 
       case status
       when 200
+        # For the responses that fail with a http 200 code
         response_body = JSON.parse(response.body).first
         successful = response_body["Success"]
         message = response_body["Message"]
