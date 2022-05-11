@@ -30,19 +30,6 @@ module RemarkableRuby
       update_metadata(attributes)
     end
 
-    def upload_file(url)
-      # Create the zip in a temp dir
-      zip_doc = ZipDocument.new(self).dump
-
-      # Send zip with put http request
-      file_data = File.read(zip_doc)
-      connection = @client.upload_connection(url)
-      response = connection.put("", file_data)
-
-      # Delete zip from temp dir
-      FileUtils.remove_entry(zip_doc)
-    end
-
     def update(name: nil, parent: nil, bookmarked: nil)
       return unless name || parent || bookmarked
 
@@ -51,11 +38,6 @@ module RemarkableRuby
       self.bookmarked = bookmarked if bookmarked
       self.version += 1
       update_metadata(attributes)
-    end
-
-    def update_metadata(attrs)
-      payload = [attrs].to_json
-      @connection.put("document-storage/json/2/upload/update-status", payload)
     end
 
     # Download the zip file for a given document in the user's current directory
@@ -75,6 +57,25 @@ module RemarkableRuby
     end
 
     private
+
+    def update_metadata(attrs)
+      payload = [attrs].to_json
+      @connection.put("document-storage/json/2/upload/update-status", payload)
+    end
+
+    def upload_file(url)
+      # Create the zip in a temp dir
+      zip_doc = ZipDocument.new(self).dump
+
+      # Send zip with put http request
+      file_data = File.read(zip_doc)
+      connection = @client.upload_connection(url)
+      response = connection.put("", file_data)
+
+      # Delete zip from temp dir
+      FileUtils.remove_entry(zip_doc)
+    end
+
 
     def get_blob_url
       params = { doc: uuid, withBlob: true }
