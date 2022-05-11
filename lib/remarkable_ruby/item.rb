@@ -40,22 +40,6 @@ module RemarkableRuby
       update_metadata(attributes)
     end
 
-    # Download the zip file for a given document in the user's current directory
-    def download
-      file_name = "#{uuid}.zip"
-      return if File.exists?(file_name)
-
-      dl_link = get_blob_url
-
-      streamed = []
-      @connection.get(dl_link) do |req|
-        req.options.on_data = Proc.new { |chunk| streamed << chunk }
-      end
-      File.write(file_name, streamed.join)
-
-      file_name
-    end
-
     private
 
     def update_metadata(attrs)
@@ -74,13 +58,6 @@ module RemarkableRuby
 
       # Delete zip from temp dir
       FileUtils.remove_entry(zip_doc)
-    end
-
-
-    def get_blob_url
-      params = { doc: uuid, withBlob: true }
-      response = @connection.get("document-storage/json/2/docs", params)
-      JSON.parse(response.body).first['BlobURLGet']
     end
 
     def put_blob_url

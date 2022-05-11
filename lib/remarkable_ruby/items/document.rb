@@ -8,6 +8,21 @@ module RemarkableRuby
       @name = File.basename(path) if path
     end
 
+    # Download the zip file for a given document in the user's current directory
+    def download
+      file_name = "#{uuid}.zip"
+      return if File.exists?(file_name)
+
+      dl_link = get_blob_url
+
+      streamed = []
+      @connection.get(dl_link) do |req|
+        req.options.on_data = Proc.new { |chunk| streamed << chunk }
+      end
+      File.write(file_name, streamed.join)
+
+      file_name
+    end
 
     # Return an array of highlights from a document
     def highlights
@@ -21,6 +36,14 @@ module RemarkableRuby
         end
       end
       highlights.flatten
+    end
+
+    private
+
+    def get_blob_url
+      params = { doc: uuid, withBlob: true }
+      response = @connection.get("document-storage/json/2/docs", params)
+      JSON.parse(response.body).first['BlobURLGet']
     end
   end
 end
