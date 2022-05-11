@@ -1,13 +1,6 @@
-class Highlight
-  attr_reader :color, :text, :length, :start
+require 'ostruct'
 
-  def initialize(attrs)
-    @color = attrs['color']
-    @text = attrs['text']
-    @length = attrs['length']
-    @start = attrs['start']
-  end
-
+class Highlight < OpenStruct
   class << self
     def join_adjacent(highlights)
       highlights = highlights.sort_by(&:start)
