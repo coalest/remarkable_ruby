@@ -65,7 +65,7 @@ module RemarkableRuby
 
     def upload_file(url)
       # Create the zip in a temp dir
-      zip_doc = ZipDocument.new(self).dump
+      zip_doc = ZipItem.new(self).dump
 
       # Send zip with put http request
       file_data = File.read(zip_doc)

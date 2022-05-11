@@ -1,5 +1,5 @@
 module RemarkableRuby
-  class ZipDocument
+  class ZipItem
     attr_reader :item
 
     def initialize(item)
