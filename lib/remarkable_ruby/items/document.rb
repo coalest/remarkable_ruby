@@ -8,13 +8,13 @@ module RemarkableRuby
     # Download the zip file for a given document in the user's current directory
     def download
       file_name = "#{uuid}.zip"
-      return if File.exists?(file_name)
+      return if File.exist?(file_name)
 
       dl_link = get_blob_url
 
       streamed = []
       @connection.get(dl_link) do |req|
-        req.options.on_data = Proc.new { |chunk| streamed << chunk }
+        req.options.on_data = proc { |chunk| streamed << chunk }
       end
       File.write(file_name, streamed.join)
 
@@ -28,18 +28,18 @@ module RemarkableRuby
 
     # Delete a document from device and cloud
     def delete!
-      payload = [{ ID: uuid, Version: version }]
-      response = connection.put("/document-storage/json/2/delete", payload)
+      payload = [{ID: uuid, Version: version}]
+      connection.put("/document-storage/json/2/delete", payload)
     end
 
     # Return an array of highlights from a document
     def highlights
       highlights = []
-      download unless File.exists?("#{uuid}.zip")
+      download unless File.exist?("#{uuid}.zip")
       Zip::File.open("#{uuid}.zip") do |zip_doc|
         zip_doc.select { |file| file.name.include?("highlights") }.each do |file|
-          json = JSON.parse(file.get_input_stream.read)['highlights'].first
-          page_highlights = json.map{ |attrs| Highlight.new(attrs) }
+          json = JSON.parse(file.get_input_stream.read)["highlights"].first
+          page_highlights = json.map { |attrs| Highlight.new(attrs) }
           highlights << Highlight.join_adjacent(page_highlights)
         end
       end
@@ -71,7 +71,7 @@ module RemarkableRuby
       # Send zip with put http request
       file_data = File.read(zip_doc)
       connection = @client.upload_connection(url)
-      response = connection.put("", file_data)
+      connection.put("", file_data)
 
       # Delete zip from temp dir
       FileUtils.remove_entry(zip_doc)
@@ -83,13 +83,13 @@ module RemarkableRuby
     end
 
     def get_blob_url
-      params = { doc: uuid, withBlob: true }
+      params = {doc: uuid, withBlob: true}
       response = @connection.get("document-storage/json/2/docs", params)
-      JSON.parse(response.body).first['BlobURLGet']
+      JSON.parse(response.body).first["BlobURLGet"]
     end
 
     def put_blob_url
-      payload = [{ "ID": uuid, "Type": type, "Version": version }]
+      payload = [{ID: uuid, Type: type, Version: version}]
       response = @connection.put("document-storage/json/2/upload/request", payload)
       JSON.parse(response.body).first["BlobURLPut"]
     end

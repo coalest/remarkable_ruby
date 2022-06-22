@@ -8,6 +8,6 @@ gemspec
 gem "rake", "~> 13.0"
 gem "minitest", "~> 5.0"
 gem "standard"
-gem "faraday", "~> 2.2.0" 
+gem "faraday", "~> 2.2.0"
 gem "faraday-net_http", "~> 2.0"
 gem "rubyzip"

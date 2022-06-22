@@ -6,7 +6,6 @@ require "securerandom"
 require "json"
 require "zip"
 require "yaml"
-require "pry"
 
 module RemarkableRuby
   autoload :Client, "remarkable_ruby/client"

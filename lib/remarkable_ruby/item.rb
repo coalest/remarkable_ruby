@@ -1,13 +1,13 @@
 module RemarkableRuby
   class Item
-    attr_reader :uuid, :path, :message, :success, :blob_url_get, :bookmarked, 
+    attr_reader :uuid, :path, :message, :success, :blob_url_get, :bookmarked,
       :blob_url_get_expires, :modified_client, :type, :current_page,
       :connection
 
     attr_accessor :parent, :name, :version
 
     def initialize(attrs: nil, client: nil, path: nil)
-      @client = client ? client : Client.new
+      @client = client || Client.new
       @connection = @client.connection
       @path = path
       @name = File.basename(path) if path
@@ -29,7 +29,7 @@ module RemarkableRuby
     end
 
     def init_from_attributes(attrs)
-      @uuid = attrs["ID"] 
+      @uuid = attrs["ID"]
       @version = attrs["Version"]
       @message = attrs["Message"]
       @success = attrs["Success"]
@@ -43,18 +43,18 @@ module RemarkableRuby
     end
 
     def attributes
-      { "ID": @uuid,
-        "BlobURLGet": @blob_url_get,
-        "CurrentPage": @current_page,
-        "BlobURLGetExpires": @blob_url_get_expires,
-        "Message": @message,
-        "Success": @success,
-        "Bookmarked": @bookmarked,             
-        "Version": @version, 
-        "ModifiedClient": @modified_client,
-        "Type": @type,
-        "VissibleName": @name,
-        "Parent": @parent }
+      {ID: @uuid,
+       BlobURLGet: @blob_url_get,
+       CurrentPage: @current_page,
+       BlobURLGetExpires: @blob_url_get_expires,
+       Message: @message,
+       Success: @success,
+       Bookmarked: @bookmarked,
+       Version: @version,
+       ModifiedClient: @modified_client,
+       Type: @type,
+       VissibleName: @name,
+       Parent: @parent}
     end
   end
 end
