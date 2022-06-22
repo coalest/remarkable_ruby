@@ -2,10 +2,10 @@ class Highlight
   attr_reader :color, :text, :length, :start
 
   def initialize(attrs)
-    @color = attrs['color']
-    @text = attrs['text']
-    @length = attrs['length']
-    @start = attrs['start']
+    @color = attrs["color"]
+    @text = attrs["text"]
+    @length = attrs["length"]
+    @start = attrs["start"]
   end
 
   class << self
@@ -28,7 +28,7 @@ class Highlight
       offset = 0
       bools = get_bools(highlights)
       while offset < highlights.length - 2
-        next_false_index = bools[offset..-1].index(false) + offset
+        next_false_index = bools[offset..].index(false) + offset
         adjacent_highlights << [offset, next_false_index]
         offset = next_false_index + 1
       end
@@ -44,13 +44,13 @@ class Highlight
     end
 
     def merge(highlights)
-      combined_text = highlights.map(&:text).join(' ')
+      combined_text = highlights.map(&:text).join(" ")
 
       {
-        'color' => highlights.first.color,
-        'text' => combined_text,
-        'length' => combined_text.length,
-        'start' => highlights.first.start
+        "color" => highlights.first.color,
+        "text" => combined_text,
+        "length" => combined_text.length,
+        "start" => highlights.first.start
       }
     end
   end

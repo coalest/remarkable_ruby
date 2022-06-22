@@ -11,20 +11,20 @@ module RemarkableRuby
       tokens = Config.load_tokens
       return if tokens.nil?
 
-      @device_token = tokens['devicetoken']
+      @device_token = tokens["devicetoken"]
       @user_token = refresh_user_token
     end
 
     # returns metadata for all files
     def documents(download_links: false)
-      params = download_links ? { 'withBlob': true } : {}
+      params = download_links ? {withBlob: true} : {}
       response = connection.get("document-storage/json/2/docs", params)
       create_new_items(response)
     end
 
     # returns metadata for one file
     def document(uuid:, download_link: false)
-      params = download_link ? { 'withBlob': true } : {}
+      params = download_link ? {withBlob: true} : {}
       params[:doc] = uuid
       response = connection.get("document-storage/json/2/docs", params)
       attrs = JSON.parse(response.body).first
@@ -55,7 +55,7 @@ module RemarkableRuby
     def upload_connection(url)
       Faraday.new(url) do |conn|
         conn.request :authorization, :Bearer, @user_token
-        conn.headers['Content-Type'] = ""
+        conn.headers["Content-Type"] = ""
       end
     end
 
@@ -72,7 +72,7 @@ module RemarkableRuby
     def storage_url
       return @storage_url if @storage_url
 
-      conn = Faraday.new(url: SERVICE_DISCOVERY_URL)     
+      conn = Faraday.new(url: SERVICE_DISCOVERY_URL)
       response = conn.get(SERVICE_DISCOVERY_ENDPOINT)
       body = JSON.parse(response.body)
       @storage_url = "https://" + body["Host"]
@@ -96,16 +96,15 @@ module RemarkableRuby
       body.map do |attrs|
         case attrs["Type"]
         when "CollectionType" then Folder.new(attrs: attrs, client: self)
-        when "DocumentType"   then Document.new(attrs: attrs, client: self) 
+        when "DocumentType" then Document.new(attrs: attrs, client: self)
         end
       end
     end
 
     def new_device_body
-      { deviceDesc: "desktop-macos",
-        code: one_time_code,
-        deviceID: SecureRandom.uuid
-      }.to_json
+      {deviceDesc: "desktop-macos",
+       code: one_time_code,
+       deviceID: SecureRandom.uuid}.to_json
     end
   end
 end

@@ -8,9 +8,9 @@ A Ruby API wrapper for the [reMarkable](https://remarkable.com/) tablet based on
 - [x] Download content
 - [x] Delete a document or folder
 - [x] View highlights from a document
-- [ ] Upload files
+- [x] Upload files
 - [ ] Create folders
-- [ ] Move/rename documents and folders
+- [x] Move/rename documents and folders
 
 ## Contributing
 
