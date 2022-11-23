@@ -32,7 +32,7 @@ module RemarkableRuby
     end
 
     def register_device(one_time_code)
-      response = auth_connection.post(DEVICE_TOKEN_ENDPOINT, new_device_body, {})
+      response = auth_connection.post(DEVICE_TOKEN_ENDPOINT, new_device_body(one_time_code), {})
       device_token = handle_response(response).body
 
       @device_token = device_token
@@ -101,7 +101,7 @@ module RemarkableRuby
       end
     end
 
-    def new_device_body
+    def new_device_body(one_time_code)
       {deviceDesc: "desktop-macos",
        code: one_time_code,
        deviceID: SecureRandom.uuid}.to_json
